@@ -1011,3 +1011,94 @@ a.title-pregunta:hover {
 		text-align: center;
 	}
 }
+
+/* --- ESTILOS DESEMPATE --- */
+.desempat-container {
+	font-family: "Geomanist", sans-serif;
+	background: linear-gradient(180deg, #ffffff 0%, #fcfcfd 100%);
+	padding: 30px;
+	margin: 20px 0;
+	border: 1px solid var(--ejb-border);
+	border-radius: 28px;
+	box-shadow: var(--ejb-shadow-md);
+}
+
+.desempat-intro {
+	font-size: 1.1rem;
+	margin-bottom: 25px;
+	color: var(--ejb-text);
+	line-height: 1.6;
+}
+
+.desempat-group {
+	margin-bottom: 25px;
+}
+
+.desempat-group label {
+	display: block;
+	font-weight: bold;
+	color: var(--ejb-primary);
+	margin-bottom: 10px;
+	font-size: 1.05rem;
+}
+
+.desempat-group textarea {
+	width: 100%;
+	padding: 15px;
+	border: 1px solid var(--ejb-border);
+	border-radius: 16px;
+	font-family: inherit;
+	font-size: 1rem;
+	background: var(--ejb-surface-soft);
+	resize: vertical;
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.desempat-group textarea:focus {
+	border-color: var(--ejb-primary);
+	box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.1);
+	outline: none;
+}
+
+.boton-desempat {
+	background: linear-gradient(135deg, var(--ejb-primary) 0%, #e33b2f 100%);
+	color: white !important;
+	border: none;
+	padding: 15px 30px;
+	border-radius: 999px;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: 1.1rem;
+	font-weight: bold;
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+	width: 100%;
+	display: block;
+	text-align: center;
+	box-shadow: 0 14px 24px rgba(204, 0, 0, 0.2);
+}
+
+.boton-desempat:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 18px 30px rgba(159, 13, 13, 0.24);
+}
+
+.desempat-msg-info, .desempat-msg-success {
+	padding: 20px;
+	border-radius: 16px;
+	margin: 20px 0;
+	font-size: 1.05rem;
+	text-align: center;
+	font-weight: 500;
+}
+
+.desempat-msg-info {
+	background: #f8f9fa;
+	border: 1px solid #e9ecef;
+	color: #495057;
+}
+
+.desempat-msg-success {
+	background: var(--ejb-success-soft);
+	border: 1px solid rgba(31, 157, 85, 0.24);
+	color: #21623e;
+}

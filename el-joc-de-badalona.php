@@ -18,6 +18,7 @@ define('EJB_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 // Cargar archivo con funciones principales
 require_once EJB_PLUGIN_PATH . 'includes/preguntas-functions.php';
+require_once EJB_PLUGIN_PATH . 'includes/desempat-functions.php';
 
 // Afegir explícitament activació i desactivació del cron a l'arxiu principal
 register_activation_hook(__FILE__, 'ejb_activar_cron');
@@ -305,6 +306,56 @@ if (isset($_POST['ejb_reactivar_pregunta'])) {
         <input type="submit" name="ejb_reactivar_pregunta" class="button button-secondary" value="Reactivar pregunta">
     </form>
 </div>
+        </div>
+    </section>
+
+    <!-- GUIA DE SHORTCODES -->
+    <section class="ejb-admin-section">
+        <div class="ejb-admin-section-head">
+            <h2><span class="dashicons dashicons-editor-code"></span> Guia d'Ús i Shortcodes</h2>
+            <p>Utilitza els següents codis (shortcodes) per mostrar diferents parts del joc a les pàgines de la web.</p>
+        </div>
+        <div class="ejb-admin-layout-main">
+            <div class="card ejb-admin-card ejb-admin-card-wide" style="padding: 20px;">
+                <table class="wp-list-table widefat fixed striped" style="font-size:14px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Shortcode</th>
+                            <th style="width: 75%;">Descripció</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong><code>[preguntas_diarias]</code></strong></td>
+                            <td>Mostra el formulari de les preguntes actives del dia actual perquè els jugadors puguin respondre. S'oculta quan expira el límit.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>[respuestas_anteriores]</code></strong></td>
+                            <td>Mostra el resum de percentatge d'encerts i resultats del dia anterior.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>[clasificacion]</code></strong></td>
+                            <td>Genera la taula de classificació top 100 de jugadors amb els seus punts totals. Destaca la posició de l'usuari actual si està loguejat.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>[detalle_pregunta]</code></strong></td>
+                            <td>Mostra el detall de la resposta correcta i percentatges. S'utilitza a la pàgina de detall (single post) del Custom Post Type <code>pregunta</code>.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>[totes_les_respostes]</code></strong></td>
+                            <td>Mostra un llistat de l'arxiu històric de preguntes finalitzades de l'edició 2026.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>[totes_les_respostes_2025]</code></strong></td>
+                            <td>Mostra l'arxiu històric de l'edició 2025.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>[joc_desempat]</code></strong></td>
+                            <td>Mostra el formulari especial de 3 preguntes obertes per al desempat final. (S'activa des del menú <em>Desempat</em>).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 </div>
