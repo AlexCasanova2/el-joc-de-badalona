@@ -81,12 +81,15 @@ function ejb_mostrar_pagina_desempat() {
         check_admin_referer('ejb_desempat_verify');
         
         update_option('joc_desempat_actiu', isset($_POST['joc_desempat_actiu']) ? '1' : '0');
-        update_option('joc_desempat_data_publicacio', sanitize_text_field($_POST['joc_desempat_data_publicacio']));
-        update_option('joc_desempat_pregunta_1', sanitize_textarea_field($_POST['joc_desempat_pregunta_1']));
-        update_option('joc_desempat_pregunta_2', sanitize_textarea_field($_POST['joc_desempat_pregunta_2']));
-        update_option('joc_desempat_pregunta_3', sanitize_textarea_field($_POST['joc_desempat_pregunta_3']));
-        update_option('joc_desempat_text_intro', sanitize_textarea_field($_POST['joc_desempat_text_intro']));
-        update_option('joc_desempat_text_gracies', sanitize_textarea_field($_POST['joc_desempat_text_gracies']));
+        update_option('joc_desempat_data_publicacio', sanitize_text_field(wp_unslash($_POST['joc_desempat_data_publicacio'])));
+        update_option('joc_desempat_pregunta_1', sanitize_textarea_field(wp_unslash($_POST['joc_desempat_pregunta_1'])));
+        update_option('joc_desempat_pregunta_2', sanitize_textarea_field(wp_unslash($_POST['joc_desempat_pregunta_2'])));
+        update_option('joc_desempat_pregunta_3', sanitize_textarea_field(wp_unslash($_POST['joc_desempat_pregunta_3'])));
+        update_option('joc_desempat_text_intro', sanitize_textarea_field(wp_unslash($_POST['joc_desempat_text_intro'])));
+        update_option('joc_desempat_text_gracies', sanitize_textarea_field(wp_unslash($_POST['joc_desempat_text_gracies'])));
+        // Guardamos con wp_kses_post para permitir enlaces HTML en el recordatorio de login
+        update_option('joc_desempat_text_login', wp_kses_post(wp_unslash($_POST['joc_desempat_text_login'])));
+        update_option('joc_desempat_text_boto', sanitize_text_field(wp_unslash($_POST['joc_desempat_text_boto'])));
         
         echo '<div class="updated notice"><p>Configuració del desempat guardada correctament.</p></div>';
     }
@@ -98,6 +101,8 @@ function ejb_mostrar_pagina_desempat() {
     $pregunta_3 = get_option('joc_desempat_pregunta_3', '');
     $text_intro = get_option('joc_desempat_text_intro', 'L\'hora de la veritat ha arribat. Respon a les 3 preguntes obertes per desempatar.');
     $text_gracies = get_option('joc_desempat_text_gracies', 'Gràcies per les teves respostes! Les hem guardat correctament.');
+    $text_login = get_option('joc_desempat_text_login', 'Has d’iniciar sessió per respondre el desempat.');
+    $text_boto = get_option('joc_desempat_text_boto', 'Enviar respostes de desempat');
 
     ?>
     <div class="wrap ejb-admin-wrap">
@@ -154,6 +159,16 @@ function ejb_mostrar_pagina_desempat() {
                         <div class="ejb-form-group">
                             <label for="joc_desempat_text_gracies">Text d'agraïment (després d'enviar):</label>
                             <textarea name="joc_desempat_text_gracies" id="joc_desempat_text_gracies" rows="3" class="large-text"><?php echo esc_textarea($text_gracies); ?></textarea>
+                        </div>
+
+                        <div class="ejb-form-group">
+                            <label for="joc_desempat_text_login">Text de recordatori d'iniciar sessió (admet enllaços HTML):</label>
+                            <textarea name="joc_desempat_text_login" id="joc_desempat_text_login" rows="3" class="large-text"><?php echo esc_textarea($text_login); ?></textarea>
+                        </div>
+
+                        <div class="ejb-form-group">
+                            <label for="joc_desempat_text_boto">Text del botó d'enviar:</label>
+                            <input type="text" name="joc_desempat_text_boto" id="joc_desempat_text_boto" value="<?php echo esc_attr($text_boto); ?>" class="regular-text" />
                         </div>
 
                         <div style="margin-top: 20px;">
@@ -379,28 +394,37 @@ add_action('init', 'joc_desempat_processar_formulari');
  * 9. Shortcode [joc_desempat]
  */
 function joc_desempat_shortcode() {
-    if (get_option('joc_desempat_actiu') !== '1') {
-        return '';
+    // Detectamos si estamos en el editor de Elementor para saltarnos las restricciones de visualización
+    $es_elementor = false;
+    if (isset($_GET['elementor-preview']) || (class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->editor->is_edit_mode())) {
+        $es_elementor = true;
     }
 
-    $data_publicacio = get_option('joc_desempat_data_publicacio');
-    
-    if (empty($data_publicacio) || current_time('timestamp') < strtotime($data_publicacio)) {
-        return '<p class="desempat-msg-info">La pregunta de desempat encara no està disponible.</p>';
+    if (!$es_elementor) {
+        if (get_option('joc_desempat_actiu') !== '1') {
+            return '';
+        }
+
+        $data_publicacio = get_option('joc_desempat_data_publicacio');
+        
+        if (empty($data_publicacio) || current_time('timestamp') < strtotime($data_publicacio)) {
+            return '<p class="desempat-msg-info">La pregunta de desempat encara no està disponible.</p>';
+        }
+
+        if (!is_user_logged_in()) {
+            $text_login = get_option('joc_desempat_text_login', 'Has d’iniciar sessió per respondre el desempat.');
+            return '<p class="desempat-msg-info">' . wp_kses_post(nl2br($text_login)) . '</p>';
+        }
+
+        $user_id = get_current_user_id();
+
+        if (joc_desempat_user_ja_ha_respost($user_id)) {
+            $text_gracies = get_option('joc_desempat_text_gracies', 'Gràcies per les teves respostes! Les hem guardat correctament.');
+            return '<div class="desempat-msg-success"><p>' . nl2br(esc_html($text_gracies)) . '</p></div>';
+        }
     }
 
-    if (!is_user_logged_in()) {
-        return '<p class="desempat-msg-info">Has d’iniciar sessió per respondre el desempat.</p>';
-    }
-
-    $user_id = get_current_user_id();
-
-    if (joc_desempat_user_ja_ha_respost($user_id)) {
-        $text_gracies = get_option('joc_desempat_text_gracies', 'Gràcies per les teves respostes! Les hem guardat correctament.');
-        return '<div class="desempat-msg-success"><p>' . nl2br(esc_html($text_gracies)) . '</p></div>';
-    }
-
-    $text_intro = get_option('joc_desempat_text_intro', '');
+    $text_intro = get_option('joc_desempat_text_intro', 'L\'hora de la veritat ha arribat. Respon a les 3 preguntes obertes per desempatar.');
     $pregunta_1 = get_option('joc_desempat_pregunta_1', '');
     $pregunta_2 = get_option('joc_desempat_pregunta_2', '');
     $pregunta_3 = get_option('joc_desempat_pregunta_3', '');
@@ -431,7 +455,10 @@ function joc_desempat_shortcode() {
             </div>
 
             <div class="desempat-submit">
-                <button type="submit" class="boton-desempat" onclick="return confirm('Segur que vols enviar aquestes respostes? Un cop enviades no es podran modificar.');">Enviar respostes de desempat</button>
+                <?php 
+                $btn_text = get_option('joc_desempat_text_boto', 'Enviar respostes de desempat'); 
+                ?>
+                <button type="submit" class="boton-desempat" onclick="return confirm('Segur que vols enviar aquestes respostes? Un cop enviades no es podran modificar.');"><?php echo esc_html($btn_text); ?></button>
             </div>
         </form>
     </div>
