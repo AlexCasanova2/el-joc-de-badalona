@@ -102,58 +102,66 @@ function ejb_mostrar_pagina_desempat() {
     ?>
     <div class="wrap ejb-admin-wrap">
         <h1 class="ejb-admin-title">🏆 Configuració del Desempat</h1>
-        <div class="card ejb-admin-card ejb-admin-card-primary" style="padding: 20px;">
-            <form method="post">
-                <?php wp_nonce_field('ejb_desempat_verify'); ?>
-                
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="joc_desempat_actiu">Activar Desempat</label></th>
-                        <td>
-                            <input type="checkbox" name="joc_desempat_actiu" id="joc_desempat_actiu" value="1" <?php checked($actiu, '1'); ?> />
-                            <p class="description">Marcar per fer visible el formulari (sempre que es compleixi la data).</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="joc_desempat_data_publicacio">Data y Hora de Publicació</label></th>
-                        <td>
-                            <input type="datetime-local" name="joc_desempat_data_publicacio" id="joc_desempat_data_publicacio" value="<?php echo esc_attr($data_publicacio); ?>" class="regular-text" />
-                            <p class="description">El formulari no es mostrarà abans d'aquesta data i hora.</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="joc_desempat_text_intro">Text introductori</label></th>
-                        <td>
+        
+        <div class="ejb-admin-sections">
+            <section class="ejb-admin-section">
+                <div class="ejb-admin-section-head">
+                    <h2>Dades del Desempat</h2>
+                    <p>Configura les preguntes, els textos d'introducció i el moment en què estarà disponible el formulari per als jugadors amb un 100% d'encerts.</p>
+                </div>
+
+                <div class="card ejb-admin-card ejb-admin-card-wide" style="width: 100%;">
+                    <h2 class="title">Configuració general</h2>
+                    <form method="post" class="ejb-desempat-config-form">
+                        <?php wp_nonce_field('ejb_desempat_verify'); ?>
+                        
+                        <div class="ejb-form-group">
+                            <label for="joc_desempat_actiu">Activar Desempat:</label>
+                            <div>
+                                <input type="checkbox" name="joc_desempat_actiu" id="joc_desempat_actiu" value="1" <?php checked($actiu, '1'); ?> />
+                                <span class="description">Marcar per fer visible el formulari (sempre que es compleixi la data).</span>
+                            </div>
+                        </div>
+
+                        <div class="ejb-form-group">
+                            <label for="joc_desempat_data_publicacio">Data y Hora de Publicació:</label>
+                            <div>
+                                <input type="datetime-local" name="joc_desempat_data_publicacio" id="joc_desempat_data_publicacio" value="<?php echo esc_attr($data_publicacio); ?>" class="regular-text" />
+                                <p class="description">El formulari no es mostrarà abans d'aquesta data i hora.</p>
+                            </div>
+                        </div>
+
+                        <div class="ejb-form-group">
+                            <label for="joc_desempat_text_intro">Text introductori:</label>
                             <textarea name="joc_desempat_text_intro" id="joc_desempat_text_intro" rows="3" class="large-text"><?php echo esc_textarea($text_intro); ?></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="joc_desempat_pregunta_1">Pregunta 1</label></th>
-                        <td>
+                        </div>
+
+                        <div class="ejb-form-group">
+                            <label for="joc_desempat_pregunta_1">Pregunta 1:</label>
                             <textarea name="joc_desempat_pregunta_1" id="joc_desempat_pregunta_1" rows="3" class="large-text"><?php echo esc_textarea($pregunta_1); ?></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="joc_desempat_pregunta_2">Pregunta 2</label></th>
-                        <td>
+                        </div>
+
+                        <div class="ejb-form-group">
+                            <label for="joc_desempat_pregunta_2">Pregunta 2:</label>
                             <textarea name="joc_desempat_pregunta_2" id="joc_desempat_pregunta_2" rows="3" class="large-text"><?php echo esc_textarea($pregunta_2); ?></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="joc_desempat_pregunta_3">Pregunta 3</label></th>
-                        <td>
+                        </div>
+
+                        <div class="ejb-form-group">
+                            <label for="joc_desempat_pregunta_3">Pregunta 3:</label>
                             <textarea name="joc_desempat_pregunta_3" id="joc_desempat_pregunta_3" rows="3" class="large-text"><?php echo esc_textarea($pregunta_3); ?></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="joc_desempat_text_gracies">Text d'agraïment (després d'enviar)</label></th>
-                        <td>
+                        </div>
+
+                        <div class="ejb-form-group">
+                            <label for="joc_desempat_text_gracies">Text d'agraïment (després d'enviar):</label>
                             <textarea name="joc_desempat_text_gracies" id="joc_desempat_text_gracies" rows="3" class="large-text"><?php echo esc_textarea($text_gracies); ?></textarea>
-                        </td>
-                    </tr>
-                </table>
-                <?php submit_button('Guardar Configuració', 'primary', 'ejb_guardar_desempat'); ?>
-            </form>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <?php submit_button('Guardar Configuració', 'primary', 'ejb_guardar_desempat', false); ?>
+                        </div>
+                    </form>
+                </div>
+            </section>
         </div>
     </div>
     <?php
